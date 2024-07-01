@@ -1,0 +1,37 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DB_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Url {
+  createdAt   DateTime     @default(now())
+  id          String       @id @default(cuid())
+  sitemap     Sitemap?     @relation(fields: [sitemapId], references: [id])
+  sitemapId   String?
+  testResults TestResult[]
+  updatedAt   DateTime     @updatedAt
+  url         String?
+}
+
+model Sitemap {
+  createdAt DateTime @default(now())
+  id        String   @id @default(cuid())
+  name      String?
+  updatedAt DateTime @updatedAt
+  url       String?
+  urls      Url[]
+}
+
+model TestResult {
+  createdAt DateTime  @default(now())
+  id        String    @id @default(cuid())
+  result    Json?
+  runAt     DateTime?
+  updatedAt DateTime  @updatedAt
+  url       Url?      @relation(fields: [urlId], references: [id])
+  urlId     String?
+}
